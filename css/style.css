@@ -155,6 +155,14 @@ a { color: var(--teal); }
   .main-nav a:not(.btn) { display: none; }
   .brand-name { font-size: 22px; }
   .hero-photo {display: none}
-  .brand-name {align-items: center }
-.brand-tag {align-items: center }
+  .brand-name {display: flex;
+  justify-content: center; /* Options: flex-start, center, flex-end, space-between */
+  align-items: center;     /* Options: flex-start, center, flex-end */
+  height: 120px;           /* Height is required for vertical alignment */
+}
+.brand-tag {display: flex;
+  justify-content: center; /* Options: flex-start, center, flex-end, space-between */
+  align-items: center;     /* Options: flex-start, center, flex-end */
+  height: 120px;           /* Height is required for vertical alignment */
+}
 }
