@@ -155,5 +155,5 @@ a { color: var(--teal); }
   .main-nav a:not(.btn) { display: none; }
   .brand-name { font-size: 22px; }
   .hero-photo {display: none}
-  .brand {text-align: center}
+  .brand {align-items: center }
 }
