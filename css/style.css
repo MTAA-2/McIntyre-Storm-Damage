@@ -154,4 +154,5 @@ a { color: var(--teal); }
   .footer-legal, .footer-note { text-align: left; }
   .main-nav a:not(.btn) { display: none; }
   .brand-name { font-size: 22px; }
+  .hero-photo {display: none}
 }
