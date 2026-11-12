@@ -156,12 +156,12 @@ a { color: var(--teal); }
   .brand-name { font-size: 22px; }
   .hero-photo {display: none}
   .brand-name {display: flex;
-  justify-content: center; /* Options: flex-start, center, flex-end, space-between */
-  align-items: center;     /* Options: flex-start, center, flex-end */
-  height: 120px;           /* Height is required for vertical alignment */
+    text-align: center;
+  height: 0px;           /* Height is required for vertical alignment */
 }
 .brand-tag {display: none;
 }
+.brand{ text-align: center;}
 .hero-sub {display: none;
 }
 /* ---------- Header ---------- */
