@@ -160,10 +160,9 @@ a { color: var(--teal); }
   align-items: center;     /* Options: flex-start, center, flex-end */
   height: 120px;           /* Height is required for vertical alignment */
 }
-.brand-tag {display: flex;
-  justify-content: center; /* Options: flex-start, center, flex-end, space-between */
-  align-items: center;     /* Options: flex-start, center, flex-end */
-  height: 120px;           /* Height is required for vertical alignment */
+.brand-tag {display: none;
+}
+.hero-sub {display: none;
 }
 /* ---------- Header ---------- */
 .site-header { background: #ffffff; border-bottom: 1px solid var(--line); }
@@ -175,9 +174,4 @@ a { color: var(--teal); }
 .main-nav a:not(.btn) { color: var(--navy-deep); text-decoration: none; font-weight: 600; font-size: 15.5px; }
 .main-nav a:not(.btn):hover { color: var(--teal); }
 
-.brand
-{ display: flex;
-  justify-content: center; /* Horizontal: flex-start (left), center, flex-end (right) */
-  align-items: center; 
-}
 }
