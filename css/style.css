@@ -165,4 +165,19 @@ a { color: var(--teal); }
   align-items: center;     /* Options: flex-start, center, flex-end */
   height: 120px;           /* Height is required for vertical alignment */
 }
+/* ---------- Header ---------- */
+.site-header { background: #ffffff; border-bottom: 1px solid var(--line); }
+.header-inner { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 8px; padding-bottom: 8px; }
+.brand-name { font-family: var(--serif); font-weight: 700; font-size: 27px; letter-spacing: 0.03em; color: var(--navy); display: block; line-height: 1.1; }
+.brand-tag { display: flex; align-items: center; gap: 10px; margin-top: 3px; font-family: var(--serif); font-size: 16px; color: var(--navy); }
+.brand-rule { display: block; width: 34px; height: 1px; background: var(--teal); }
+.main-nav { display: flex; align-items: center; gap: 30px; }
+.main-nav a:not(.btn) { color: var(--navy-deep); text-decoration: none; font-weight: 600; font-size: 15.5px; }
+.main-nav a:not(.btn):hover { color: var(--teal); }
+
+.brand
+{ display: flex;
+  justify-content: center; /* Horizontal: flex-start (left), center, flex-end (right) */
+  align-items: center; 
+}
 }
