@@ -176,4 +176,5 @@ a { color: var(--teal); }
   align-items: center; 
 }
 .hero-sub { display: none; }
+.check-list { display: none; }
 }
