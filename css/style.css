@@ -142,9 +142,9 @@ a { color: var(--teal); }
 /* ---------- Mobile ---------- */
 @media (max-width: 900px) {
   .hero { padding: 24px 0 24px; }
-  .hero-grid { grid-template-columns: 1fr; gap: 38px; }
+  .hero-grid { grid-template-columns: 1fr; gap: 28px; }
   .hero-title { font-size: 38px; }
-  .form-card { padding: 24px 20px 22px; }
+  .form-card { padding: 14px 10px 12px; }
   .form-frame { height: 460px; }
   .trust-grid { grid-template-columns: 1fr; gap: 8px; text-align: left; }
   .trust-item + .trust-item { border-left: 0; }
@@ -158,7 +158,7 @@ a { color: var(--teal); }
   .brand-name {display: flex;
   justify-content: center; /* Options: flex-start, center, flex-end, space-between */
   align-items: center;     /* Options: flex-start, center, flex-end */
-  height: 120px;           /* Height is required for vertical alignment */
+  height: 100px;           /* Height is required for vertical alignment */
 }
 
 /* ---------- Header ---------- */
