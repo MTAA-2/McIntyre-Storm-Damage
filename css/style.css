@@ -106,7 +106,7 @@ a { color: var(--teal); }
 /* About the firm */
 .firm { background: #ffffff; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 48px 0 54px; }
 .firm-grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 60px; align-items: center; }
-.firm-copy > p { font-size: 17px; color: var(--ink); margin: 0 0 24px; }
+.firm-copy > p { font-size: 17px; color: var(--ink); margin: 0 0 14px; }
 .attorney { margin: 0; padding-left: 18px; border-left: 3px solid var(--navy); display: flex; flex-direction: column; }
 .attorney-name { font-family: var(--serif); font-weight: 700; font-size: 24px; color: var(--navy-deep); }
 .attorney-role { font-family: var(--serif); font-style: italic; font-size: 16px; color: var(--slate); }
