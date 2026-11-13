@@ -114,7 +114,7 @@ a { color: var(--teal); }
 .damage-tile { border: 1px solid var(--line); border-radius: 10px; padding: 22px 18px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
 .damage-tile svg { width: 44px; height: 44px; color: var(--teal); }
 .damage-tile span { font-weight: 700; font-size: 16px; color: var(--navy-deep); }
-.move-it-to-center {display: block; padding-left: auto; padding-right: auto;}
+.move-it-to-center { display: block; margin-left: auto; margin-right: auto;}
 
 /* FAQ */
 .faq { padding: 46px 0 54px; }
