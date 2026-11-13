@@ -141,15 +141,15 @@ a { color: var(--teal); }
 
 /* ---------- Mobile ---------- */
 @media (max-width: 900px) {
-  .hero { padding: 34px 0 44px; }
+  .hero { padding: 24px 0 24px; }
   .hero-grid { grid-template-columns: 1fr; gap: 38px; }
   .hero-title { font-size: 38px; }
   .form-card { padding: 24px 20px 22px; }
   .form-frame { height: 460px; }
-  .trust-grid { grid-template-columns: 1fr; gap: 18px; text-align: left; }
+  .trust-grid { grid-template-columns: 1fr; gap: 8px; text-align: left; }
   .trust-item + .trust-item { border-left: 0; }
   .path-grid { grid-template-columns: 1fr; }
-  .firm-grid { grid-template-columns: 1fr; gap: 34px; }
+  .firm-grid { grid-template-columns: 1fr; gap: 14px; }
   .footer-inner { flex-direction: column; }
   .footer-legal, .footer-note { text-align: left; }
   .main-nav a:not(.btn) { display: none; }
@@ -158,20 +158,15 @@ a { color: var(--teal); }
   .brand-name {display: flex;
   justify-content: center; /* Options: flex-start, center, flex-end, space-between */
   align-items: center;     /* Options: flex-start, center, flex-end */
-  height: 70px;           /* Height is required for vertical alignment */
+  height: 120px;           /* Height is required for vertical alignment */
 }
-.brand-tag {display: flex;
-  justify-content: center; /* Options: flex-start, center, flex-end, space-between */
-  align-items: center;     /* Options: flex-start, center, flex-end */
-  height: 20px;           /* Height is required for vertical alignment */
-}
+
 /* ---------- Header ---------- */
 .site-header { background: #ffffff; border-bottom: 1px solid var(--line); }
 .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 8px; padding-bottom: 8px; }
-.brand-name { font-family: var(--serif); font-weight: 700; font-size: 27px; letter-spacing: 0.03em; color: var(--navy); display: block; line-height: 1.1; }
 .brand-tag { display: none; }
-.brand-rule { display: block; width: 34px; height: 1px; background: var(--teal); }
-.main-nav { display: flex; align-items: center; gap: 30px; }
+.brand-rule { display: block; width: 14px; height: 1px; background: var(--teal); }
+.main-nav { display: flex; align-items: center; gap: 20px; }
 .main-nav a:not(.btn) { color: var(--navy-deep); text-decoration: none; font-weight: 600; font-size: 15.5px; }
 .main-nav a:not(.btn):hover { color: var(--teal); }
 
