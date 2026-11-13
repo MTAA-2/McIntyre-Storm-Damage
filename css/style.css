@@ -93,7 +93,7 @@ a { color: var(--teal); }
 .trust-item p { margin: 0; font-size: 14px; color: var(--slate); }
 
 /* ---------- Sections ---------- */
-.section-title { font-family: var(--serif); font-weight: 700; font-size: 36px; color: var(--navy-deep); margin: 0 0 26px; }
+.section-title { font-family: var(--serif); font-weight: 700; font-size: 36px; color: var(--navy-deep); }
 
 /* How it works */
 .path { padding: 46px 0 52px; }
