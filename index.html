@@ -81,12 +81,363 @@ src="https://www.facebook.com/tr?id=1459701774055745&ev=ViewContent&noscript=1"
 
       <!-- IFRAME EMBED — swap the src to change forms -->
       <div class="form-frame">
-        <iframe
-          src="https://forms.mtaa.ai/f/nf_b24f970775c646c0b9cebf2c5c5f80bb"
-          title="Storm damage claim review form"
-          allow="scripts; popups; modals"
-          referrerpolicy="no-referrer-when-downgrade"
-        ></iframe>
+       <script>
+(function () {
+  "use strict";
+  var config = {"url":"https://forms.mtaa.ai/f/nf_b24f970775c646c0b9cebf2c5c5f80bb?embed=1","formId":12,"title":"Form"};
+  var script = document.currentScript;
+  if (!script || !script.parentNode) return;
+  var url = new URL(config.url);
+  var origin = url.origin;
+  url.searchParams.set("parentOrigin", window.location.origin);
+  // The form is the reason the visitor is on this page, so it is never lazy:
+  // a deferred iframe costs the whole shell round trip after layout. The
+  // preconnect gets the TLS handshake out of the way while the page paints.
+  var preconnect = document.createElement("link");
+  preconnect.rel = "preconnect";
+  preconnect.href = origin;
+  var frame = document.createElement("iframe");
+  frame.src = url.toString();
+  frame.title = config.title;
+  frame.width = "100%";
+  frame.height = "720";
+  frame.style.border = "0";
+  frame.style.display = "block";
+  frame.setAttribute("referrerpolicy", "strict-origin-when-cross-origin");
+  var session = null;
+  var submitted = false;
+  var rechecking = false;
+  function cleanUrl(value) {
+    try {
+      var parsed = new URL(value);
+      if (parsed.protocol !== "https:" && parsed.protocol !== "http:") return null;
+      var clean = parsed.origin + parsed.pathname;
+      return clean.length <= 2048 ? clean : null;
+    } catch (_) { return null; }
+  }
+  // One id for this page session, reused by the browser event and by the
+  // server's Conversions API copy of it. A UUID when the browser can make one,
+  // 32 random hex characters when it only has getRandomValues, and a
+  // Math.random string on the oldest browsers: an id that is merely unlikely to
+  // repeat still beats no event at all.
+  function eventBase() {
+    var api = window.crypto;
+    try {
+      if (api && typeof api.randomUUID === "function") {
+        var uuid = api.randomUUID();
+        if (typeof uuid === "string" && /^[A-Za-z0-9-]{8,64}$/.test(uuid)) return uuid;
+      }
+      if (api && typeof api.getRandomValues === "function" && typeof Uint8Array === "function") {
+        var bytes = api.getRandomValues(new Uint8Array(16));
+        var hex = "";
+        for (var index = 0; index < bytes.length; index += 1) hex += (bytes[index] + 256).toString(16).slice(-2);
+        if (/^[a-f0-9]{32}$/.test(hex)) return hex;
+      }
+    } catch (_) { /* fall through to the arithmetic fallback */ }
+    var random = "";
+    while (random.length < 32) random += ("0000000" + Math.floor(Math.random() * 4294967296).toString(16)).slice(-8);
+    return random.slice(0, 32);
+  }
+  function cookieValue(name) {
+    // A hardened host page can make cookie access throw outright. The lead
+    // still has to be reported, just without Meta's own cookies.
+    var jar = "";
+    try { jar = typeof document.cookie === "string" ? document.cookie : ""; } catch (_) { jar = ""; }
+    var parts = jar.split(";");
+    for (var index = 0; index < parts.length; index += 1) {
+      var separator = parts[index].indexOf("=");
+      if (separator < 1 || parts[index].slice(0, separator).trim() !== name) continue;
+      var value = parts[index].slice(separator + 1).trim();
+      return value.length > 0 && value.length <= 512 ? value : null;
+    }
+    return null;
+  }
+  function blocked() {
+    return window.__MTAA_PIXEL_BLOCKED === true;
+  }
+  // A blocked visitor is never given a cookie of ours, first-party or not, and
+  // nothing new is read from their jar either: their state stays exactly what
+  // it was before this generation existed.
+  // Only an id shaped like an id is stored. A click id is a URL parameter, and
+  // one carrying a semicolon would otherwise write the attributes after it: an
+  // exotic click still travels in the attribution, it just is not persisted.
+  function writeCookie(name, value) {
+    if (blocked() || !/^[A-Za-z0-9._-]{1,512}$/.test(value)) return;
+    try {
+      document.cookie = name + "=" + value + "; Max-Age=7776000; Path=/; SameSite=Lax"
+        + (window.location.protocol === "https:" ? "; Secure" : "");
+    } catch (_) {
+      // A hardened page simply keeps no id of its own.
+    }
+  }
+  var ownBrowserId = null;
+  var ownClickId = null;
+  // Meta's own browser id when the pixel wrote one; the id we kept from an
+  // earlier visit next; and otherwise one in Meta's own format, stored first
+  // party. The built value is remembered so a page that refuses the cookie
+  // still reports one id for the visit instead of a new one each time.
+  function browserCookie() {
+    var stored = cookieValue("_fbp");
+    if (stored) return stored;
+    if (blocked()) return null;
+    var kept = cookieValue("mtaa_fbp");
+    if (kept) return kept;
+    if (ownBrowserId) return ownBrowserId;
+    var digits = "";
+    while (digits.length < 10) digits += String(Math.floor(Math.random() * 10));
+    ownBrowserId = "fb.1." + Date.now() + "." + digits;
+    writeCookie("mtaa_fbp", ownBrowserId);
+    return ownBrowserId;
+  }
+  // Meta's own click cookie when it exists; otherwise the one the pixel would
+  // have written for this click, in the same format and timestamped now, now
+  // also kept first party so a return visit still carries the click.
+  function clickCookie(landing) {
+    var stored = cookieValue("_fbc");
+    if (stored) return stored;
+    var kept = blocked() ? null : cookieValue("mtaa_fbc");
+    if (kept) return kept;
+    if (ownClickId) return ownClickId;
+    var clickId = landing.searchParams.get("fbclid");
+    if (!clickId) return null;
+    var built = "fb.1." + Date.now() + "." + clickId;
+    if (built.length > 512) return null;
+    ownClickId = built;
+    writeCookie("mtaa_fbc", built);
+    return built;
+  }
+  var eventId = eventBase();
+  function attribution() {
+    var result = {};
+    var landing = new URL(window.location.href);
+    var clean = cleanUrl(landing.href);
+    if (clean) result.landingUrl = clean;
+    var referrer = cleanUrl(document.referrer);
+    if (referrer) result.referrer = referrer;
+    ["source", "medium", "campaign", "term", "content"].forEach(function (key) {
+      var value = landing.searchParams.get("utm_" + key);
+      if (value && value.length <= 2048) result[key] = value;
+    });
+    // The pixel carriers travel as ordinary click ids: the event id this page
+    // will report, the browser and click ids, the compliance block flag,
+    // whether the host page could fire its browser pixel, and this snippet's
+    // own generation.
+    // They go in FIRST: the iframe runtime keeps only the first twenty click
+    // ids, and these six are the ones that must never be the entries dropped.
+    var clicks = {};
+    clicks.mtaa_eid = eventId;
+    var browserId = browserCookie();
+    if (browserId) clicks.fbp = browserId;
+    var clickId = clickCookie(landing);
+    if (clickId) clicks.fbc = clickId;
+    if (blocked()) clicks.mtaa_pixel_blocked = "1";
+    // Record whether this host page could fire its own browser pixel.
+    clicks.mtaa_fbq = (!blocked() && typeof window.fbq === "function") ? "1" : "0";
+    // Which snippet this page has pasted, so a lead whose events look wrong can
+    // be traced to a landing page that needs re-copying.
+    clicks.mtaa_v = "3";
+    // The last six are Facebook's campaign, adset and ad ids in both spellings
+    // the ad templates use. An Unbounce page carries them as hidden inputs; a
+    // native form has none, so the landing URL is the only place they exist and
+    // the lead's source_campaign/adset/ad columns stay empty without them.
+    ["gclid", "fbclid", "msclkid", "cid", "campaign_id", "asid", "adset_id", "aid", "ad_id"].forEach(function (key) {
+      var value = landing.searchParams.get(key);
+      if (value && value.length <= 512) clicks[key] = value;
+    });
+    if (Object.keys(clicks).length) result.clickIds = clicks;
+    return result;
+  }
+  function trackLead(outcome) {
+    if (blocked() || typeof window.fbq !== "function") return;
+    try {
+      window.fbq("track", "Lead", {}, { eventID: eventId });
+      if (outcome === "fql") window.fbq("trackCustom", "QualifiedLead", {}, { eventID: eventId + "_q" });
+    } catch (_) {
+      // A broken host pixel must never reach the lander or the form.
+    }
+  }
+  // The events the FORM named, each on the id of its own moment, so the
+  // server's Conversions API copy pairs with it whatever name was chosen.
+  function trackEvents(events, value, currency) {
+    if (blocked() || typeof window.fbq !== "function") return;
+    try {
+      for (var index = 0; index < events.length; index += 1) {
+        var entry = events[index];
+        var data = entry.name === "Purchase" ? { value: value, currency: currency } : {};
+        window.fbq(entry.standard ? "track" : "trackCustom", entry.name, data, { eventID: eventId + entry.suffix });
+      }
+    } catch (_) {
+      // A broken host pixel must never reach the lander or the form.
+    }
+  }
+  // Only the moments the runtime can post, and only with the names that moment
+  // may carry: a page may not be talked into firing an arbitrary event, nor the
+  // same moment twice, by anything that gets a message past the origin and
+  // session checks. "" is the submitted moment and "_q" the qualified one.
+  var MOMENT_NAMES = { "": ["Lead"], _q: ["QualifiedLead", "SubmitApplication", "Purchase"] };
+  function plannedEvents(data) {
+    var events = data.events;
+    if (!Array.isArray(events) || events.length < 1 || events.length > 2) return null;
+    var purchase = false;
+    var moments = [];
+    for (var index = 0; index < events.length; index += 1) {
+      var entry = events[index];
+      if (!entry || typeof entry !== "object" || Array.isArray(entry) || Object.keys(entry).length !== 3
+        || (entry.suffix !== "" && entry.suffix !== "_q")
+        || moments.indexOf(entry.suffix) >= 0
+        || MOMENT_NAMES[entry.suffix].indexOf(entry.name) < 0
+        || typeof entry.standard !== "boolean"
+        // QualifiedLead is the one custom event; every other name is standard.
+        || entry.standard === (entry.name === "QualifiedLead")) return null;
+      moments.push(entry.suffix);
+      if (entry.name === "Purchase") purchase = true;
+    }
+    var keys = Object.keys(data).length;
+    if (!purchase) return keys === 4 ? events : null;
+    if (keys !== 6 || typeof data.value !== "number" || !Number.isFinite(data.value) || data.value < 0
+      || data.currency !== "USD") return null;
+    return events;
+  }
+  var reported = null;
+  function postAttribution() {
+    // A re-check can fire after the page has taken the form off the DOM, where
+    // the frame no longer has a window to talk to. Nothing this script does may
+    // throw on a client's landing page.
+    if (!frame || !frame.contentWindow) return;
+    var next = attribution();
+    try {
+      frame.contentWindow.postMessage({ type: "mtaa-form:attribution", sessionId: session, attribution: next }, origin);
+      reported = next;
+    } catch (_) {
+      // Nothing was delivered, so the next re-check tries again.
+    }
+  }
+  // A lander's own pixel often initialises after this form has loaded, and the
+  // lead would otherwise be reported without the cookies it then wrote. Only
+  // Meta's own two can change under us; ours are written once and kept.
+  function recheck() {
+    if (submitted || !session) return;
+    var before = (reported && reported.clickIds) || {};
+    var after = attribution().clickIds || {};
+    if (before.fbp === after.fbp && before.fbc === after.fbc) return;
+    postAttribution();
+  }
+  /* mtaa-host:start */
+  var hostOn = true;
+  var hostStarted = false;
+  var hostViewTimer = null;
+  var hostViewObserver = null;
+  var hostViewSeen = false;
+  var hostScrollListener = null;
+  var hostScrollFrame = false;
+  var hostDepth = 0;
+  function hostRun(task) {
+    if (!hostOn) return;
+    try { task(); } catch (_) { hostOn = false; }
+  }
+  function hostPost(message) {
+    if (frame && frame.contentWindow) frame.contentWindow.postMessage(message, origin);
+  }
+  function hostReady() {
+    hostRun(function () {
+      if (hostStarted) return;
+      hostStarted = true;
+      if (window.performance && typeof window.performance.now === "function") {
+        var top = frame.getBoundingClientRect().top + (window.scrollY || 0);
+        hostPost({ type: "mtaa-form:host", e: "host_context", age: Math.round(window.performance.now()), fold: top >= 0 && top <= window.innerHeight });
+      }
+      if (typeof window.IntersectionObserver === "function" && typeof setTimeout === "function" && typeof clearTimeout === "function") {
+        hostViewObserver = new window.IntersectionObserver(function (entries) {
+          hostRun(function () {
+            if (hostViewSeen) return;
+            var visible = entries[0] && entries[0].target === frame && entries[0].intersectionRatio >= 0.5;
+            if (visible && hostViewTimer === null) {
+              hostViewTimer = setTimeout(function () {
+                hostRun(function () {
+                  hostViewTimer = null;
+                  hostViewSeen = true;
+                  if (hostViewObserver) hostViewObserver.disconnect();
+                  hostViewObserver = null;
+                  hostPost({ type: "mtaa-form:host", e: "form_in_view" });
+                });
+              }, 1000);
+            } else if (!visible && hostViewTimer !== null) {
+              clearTimeout(hostViewTimer);
+              hostViewTimer = null;
+            }
+          });
+        }, { threshold: 0.5 });
+        hostViewObserver.observe(frame);
+      }
+      if (typeof window.requestAnimationFrame === "function") {
+        hostScrollListener = function () {
+          hostRun(function () {
+            if (hostScrollFrame) return;
+            hostScrollFrame = true;
+            window.requestAnimationFrame(function () {
+              hostRun(function () {
+                hostScrollFrame = false;
+                var height = document.documentElement.scrollHeight;
+                if (!height) return;
+                var before = hostDepth;
+                hostDepth = Math.max(hostDepth, 100 * ((window.scrollY || 0) + window.innerHeight) / height);
+                [25, 50, 75, 100].forEach(function (depth) {
+                  if (before < depth && hostDepth >= depth) hostPost({ type: "mtaa-form:host", e: "host_scroll", d: depth });
+                });
+                if (hostDepth >= 100) window.removeEventListener("scroll", hostScrollListener);
+              });
+            });
+          });
+        };
+        window.addEventListener("scroll", hostScrollListener, { passive: true });
+        hostScrollListener();
+      }
+    });
+  }
+  /* mtaa-host:end */
+  window.addEventListener("message", function (event) {
+    if (event.origin !== origin || event.source !== frame.contentWindow) return;
+    var data = event.data;
+    if (!data || typeof data !== "object" || Array.isArray(data) || data.formId !== config.formId) return;
+    if (data.type === "mtaa-form:ready") {
+      if (Object.keys(data).length !== 3 || typeof data.sessionId !== "string"
+        || !/^[A-Za-z0-9_-]{8,128}$/.test(data.sessionId)) return;
+      session = data.sessionId;
+      postAttribution();
+      hostReady();
+      // One set of re-checks per page, however many times the form announces
+      // itself: a remounted iframe must not multiply the timers.
+      if (!rechecking && typeof setTimeout === "function") {
+        rechecking = true;
+        setTimeout(recheck, 2000);
+        setTimeout(recheck, 5000);
+        setTimeout(recheck, 15000);
+      }
+    } else if (data.type === "mtaa-form:resize") {
+      if (Object.keys(data).length !== 4 || !session || data.sessionId !== session
+        || typeof data.height !== "number" || !Number.isFinite(data.height) || data.height <= 0) return;
+      frame.height = String(Math.min(10000, Math.max(320, Math.ceil(data.height))));
+      recheck();
+    } else if (data.type === "mtaa-form:meta-events") {
+      if (!session || data.sessionId !== session || submitted) return;
+      var planned = plannedEvents(data);
+      if (!planned) return;
+      submitted = true;
+      trackEvents(planned, data.value, data.currency);
+    } else if (data.type === "mtaa-form:submitted") {
+      // Older published forms post only this message, and a current one posts
+      // it after the plan above. One flag covers both, so a lead is counted
+      // once whichever of them this page understands.
+      if (Object.keys(data).length !== 4 || !session || data.sessionId !== session || submitted
+        || (data.outcome !== "fql" && data.outcome !== "valid_non_fql")) return;
+      submitted = true;
+      trackLead(data.outcome);
+    }
+  });
+  script.parentNode.insertBefore(preconnect, script);
+  script.parentNode.insertBefore(frame, script);
+})();
+</script>
       </div>
 
       <p class="form-note">Your information is used to evaluate your claim and contact you about it.</p>
